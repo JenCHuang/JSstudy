@@ -1,0 +1,15 @@
+div {
+    width: 70%;
+    height: 500px;
+    background-color: greenyellow;
+    cursor: url(man.png), auto;
+}
+
+p {
+    height: 30px;
+    font-size: large;
+}
+
+/* body {
+    cursor: url(man.png), auto;
+} */
