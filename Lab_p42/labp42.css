@@ -4,3 +4,10 @@ body {
 li {
     text-align: left;
 }
+p {
+    text-align: left;
+}
+
+img {
+    width: 95%;
+}
