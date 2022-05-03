@@ -1,9 +1,10 @@
 let topic = [
-    "尚未開學",
-    "國定假日",
+    "停課-尚未開學",
+    "停課-國定假日",
     "環境準備",
-    "隨機",
-    "重複"
+    "隨機性",
+    "重複性",
+    "條件判斷"
 ]
 
 let startDate = new Date();
@@ -16,4 +17,13 @@ function setMonthAndDay(startMonth,startDay){
     startDate.setSeconds(0);
 };
 
-setMonthAndDay(2,21);
+// setMonthAndDay(2,21); // default
+// setMonthAndDay(4,1);
+let start = document.getElementById("start");
+start.onchange = function(){
+    let d = new Date(start.value);
+    setMonthAndDay(d.getMonth()+1,d.getDate());
+    // console.log(d.getMonth(),d.getDay());
+    $("#course").empty();
+    main();
+};
