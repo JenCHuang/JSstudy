@@ -9,13 +9,16 @@ function main(){
     let msPerDay = 1000*60*60*24;
     for(let x=0;x<topicCount;x++){
         let hostDay = new Date(startDate.getTime()+7*x*msPerDay);
-        let a = '<td>'
+        let atd = '<td>';
         if (topic[x].includes("停課") == true){
-            a = `<td class="td1">`;
-        }
+            atd = `<td class="td1">`;
+        };
+        let atr = `<tr class="tr2">`;
         if (x%2 == 0) {
-            $("#course").append(
-            `<tr class="tr1">` +
+            atr =  `<tr class="tr1">`;
+        };
+        $("#course").append(
+            atr +
             `<td>${x+1}</td>` + // 陣列從0開始,場次從1開始
             // `<td>${startDate+7*x}</td>` + // 會有錯誤(型態不同)
             // `<td>${hostDay}</td>` +
@@ -24,16 +27,7 @@ function main(){
             // `<td>${hostDay.toLocaleDateString().slice(5)}</td>` +
             // `<td>${hostDay.toDateString().slice(4,-5)}</td>` +
             `<td>${hostDay.getMonth()+1}月${hostDay.getDate()}日</td>` +
-            //
-            a +`${topic[x]}</td>` +
+            atd +`${topic[x]}</td>` +
             `</tr>`);
-        }else{
-            $("#course").append(
-                `<tr class="tr2">` +
-                `<td>${x+1}</td>` + 
-                `<td>${hostDay.getMonth()+1}月${hostDay.getDate()}日</td>` +
-                a +`${topic[x]}</td>` +
-                `</tr>`);
-        }
-    }
+    };
 }
