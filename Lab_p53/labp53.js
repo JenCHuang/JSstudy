@@ -1,5 +1,8 @@
 $(function(){
     main();
+
+    let start = document.getElementById("start");
+    start.onchange = changeDate;
 });
 
 function main(){

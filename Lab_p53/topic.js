@@ -19,11 +19,10 @@ function setMonthAndDay(startMonth,startDay){
 
 // setMonthAndDay(2,21); // default
 // setMonthAndDay(4,1);
-let start = document.getElementById("start");
-start.onchange = function(){
+
+function changeDate(){
     let d = new Date(start.value);
     setMonthAndDay(d.getMonth()+1,d.getDate());
-    // console.log(d.getMonth(),d.getDay());
     $("#course").empty();
     main();
 };
