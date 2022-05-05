@@ -18,6 +18,11 @@ $(function(){
 function clickrun(){
     clearInterval(myslot);
     count = 0;
+    $( "#photo" ).attr({
+        title: '',
+        alt: '',
+        src: ''
+    });
     ind = Math.floor(Math.random()*num);
     myslot = setInterval(slotf,20);
 };
@@ -26,19 +31,23 @@ function slotf(){
     count++;
     let ind_show = (count+ind)%5
     $("h1").text($("li").eq(ind_show).text());
-    if (count==(50+ind)){
+    if (count==(40+ind)){
         clearInterval(myslot);
         myslot = setInterval(slotf,40);
     };
-    if (count==(70+ind)){
+    if (count==(65+ind)){
         clearInterval(myslot);
         myslot = setInterval(slotf,80);
     };
-    if (count==(95+ind)){
+    if (count==(80+ind)){
         clearInterval(myslot);
         myslot = setInterval(slotf,160);
     };
-    if (count > (100+ind)){
+    if (count==(85+ind)){
+        clearInterval(myslot);
+        myslot = setInterval(slotf,320);
+    };
+    if (count > (88+ind)){
         clearInterval(myslot);
         $("input").attr("value","Roll Again ?");
         $( "#photo" ).attr({
