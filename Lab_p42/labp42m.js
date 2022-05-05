@@ -6,21 +6,45 @@ let ArrURL = [
     "https://rimage.gnst.jp/livejapan.com/public/article/detail/a/00/00/a0000370/img/basic/a0000370_main.jpg" //?20201002142956&q=80&rw=750&rh=536"
 ];
 let num = $("li").length;
-
+// 挑戰: 拉霸效果
+let mainslot = 0;
+let myslot = 0;  
+let count = 0;
+let ind = 0;
 $(function(){
-    $("input").on("click", function () {
-        let ind = Math.floor(Math.random()*num);
-    //  讓選項不重複出現
-        while ($("h1").text() == $("li").eq(ind).text()) {
-            ind = Math.floor(Math.random()*num);
-        };
-        $("h1").text($("li").eq(ind).text());
-        $( "#photo" ).attr({
-            title: $("li").eq(ind).text(),
-            alt: $("li").eq(ind).text(),
-            src: ArrURL[ind]
-          });
-    });
+    $("input").on("click", clickrun);
 });
 
-// 挑戰: 跑馬燈/拉霸 效果
+function clickrun(){
+    clearInterval(myslot);
+    count = 0;
+    ind = Math.floor(Math.random()*num);
+    myslot = setInterval(slotf,20);
+};
+
+function slotf(){
+    count++;
+    let ind_show = (count+ind)%5
+    $("h1").text($("li").eq(ind_show).text());
+    if (count==(50+ind)){
+        clearInterval(myslot);
+        myslot = setInterval(slotf,40);
+    };
+    if (count==(70+ind)){
+        clearInterval(myslot);
+        myslot = setInterval(slotf,80);
+    };
+    if (count==(95+ind)){
+        clearInterval(myslot);
+        myslot = setInterval(slotf,160);
+    };
+    if (count > (100+ind)){
+        clearInterval(myslot);
+        $("input").attr("value","Roll Again ?");
+        $( "#photo" ).attr({
+            title: $("li").eq(ind_show).text(),
+            alt: $("li").eq(ind_show).text(),
+            src: ArrURL[ind_show]
+        });
+    }
+};

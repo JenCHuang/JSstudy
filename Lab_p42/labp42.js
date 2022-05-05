@@ -39,6 +39,10 @@ let num = $("li").length;
 $(function(){
     $("input").on("click", function () {
         let ind = Math.floor(Math.random()*num);
+    //  讓選項不重複出現
+        while ($("h1").text() == $("li").eq(ind).text()) {
+            ind = Math.floor(Math.random()*num);
+        };
         $("h1").text($("li").eq(ind).text());
         $( "#photo" ).attr({
             title: $("li").eq(ind).text(),
