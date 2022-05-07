@@ -66,7 +66,7 @@ $(document).on("keydown", function (event) {
         // 1.先判斷使用者做了什麼
         // 2.判斷目標位置那一格是什麼
         // 3.決定要做的事 (只能轉頭 / 可以過去 / ...)
-    targetImg = { //主角的目標座標，先放個"不可能出現的"起始值
+    targetImg = { //主角的目標座標，先放個不會有動作的起始值(見最後一個if-else)
         "x":-1,
         "y":-1
     };
@@ -101,7 +101,7 @@ $(document).on("keydown", function (event) {
             cutImagePositionX = 0; // 臉朝下
             break;
         default: // 其他按鍵不處理
-            return;
+            return; // 不做任何動作並離開 switch
     };
 
     //確認目標位置不會超過地圖
