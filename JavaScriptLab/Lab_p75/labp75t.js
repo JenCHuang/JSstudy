@@ -51,6 +51,8 @@ $(function () {
     mapArray[9][13]=0;
     mapArray[8][14]=0;
     mapArray[9][14]=0;
+    mapArray[14][24]=0;
+    mapArray[15][23]=0;
     mapArray[15][24]=40;
 
     // get Canvas
