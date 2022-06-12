@@ -8,15 +8,30 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <style>
+            #dataTable {
+                width: 80%;
+                text-align: center;
+            }
+            #title1 {
+                text-align: center;
+                font-size: 28px;
+            }
+            .div1 {
+                text-align: center;
+                font-size: 20px;
+            }
+        </style>
     </head>
     <body>
         <div>
-            <p>衛福部最近新聞:</p>
-            <table id ="dataTable" width="98%"></table>
+            <p id="title1">衛福部最近新聞:</p>
+            <table id ="dataTable"></table>
         </div>
         <br>
-        
-        <button>Go</button>
+        <div class="div1">
+            <button>Get</button>
+        </div>
         
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
