@@ -32,6 +32,8 @@ function loadServerData(){
     // if-statement 只有一行時, 可以不用 {}
     // "this" 通常是驅動此function的元件
     // debugger;
+    // https://openweathermap.org/api
+    // gmail/weaher1234
     let weatherAPI_URL = "https://api.openweathermap.org/data/2.5/weather?";
     let weatherMapAPIKey = "847bf9a41e993fb6962ba48428b0ea58";
 
