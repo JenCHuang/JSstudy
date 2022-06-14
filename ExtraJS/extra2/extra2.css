@@ -1,0 +1,13 @@
+body {
+    text-align: center;
+}
+
+img {
+    width: 30%;
+    height: 200px;
+    border: 1px solid gray;
+}
+
+button {
+    font-size: 24px;
+}
