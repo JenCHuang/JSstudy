@@ -1,0 +1,18 @@
+body {
+    text-align: center;
+}
+
+svg {
+    border: 1px solid #ccc;
+}
+
+.axis .domain{ 
+    /* 軸線的顏色 */
+    stroke: #bbb;
+}
+
+.x .tick line {
+    stroke: #bbb;
+    stroke-width: 0.5;
+    stroke-dasharray: 4,2;
+}

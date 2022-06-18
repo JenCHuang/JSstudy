@@ -14,6 +14,10 @@ function asyncProcess(imageID, imageURL){
                     //         此為jquery的缺陷
                 resolve(this.naturalWidth); // 修正寫法
             });
+            $(imageID).on('error',function(){
+                // 出錯時, 拋出錯誤字串
+                reject("Image Source error!");
+            });
         }
     );
 };
@@ -27,6 +31,7 @@ function gofunc2(){
     // 1.等所有圖片都載入才開始計算
     // Promise.all(必要的事).then(等必要的事都完成,接著要做的事)
     Promise.all([
+        // asyncProcess("#image1","https://punchline.asia/wp-content/uploads/2.jpg"),
         asyncProcess("#image1","https://punchline.asia/wp-content/uploads/2017/09/it-movie-poster-1.jpg"),
         asyncProcess("#image2","https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c618cd88432989.5dd5e72e505d1.jpg"),
         asyncProcess("#image3","https://www.u-buy.com.tw/productimg/?image=aHR0cHM6Ly9tLm1lZGlhLWFtYXpvbi5jb20vaW1hZ2VzL0kvNzFIQk9PN3RZNUwuX0FDX1NMMTUwMF8uanBn.jpg")
@@ -52,7 +57,7 @@ function gofunc2(){
             };
         },
         error => {
-            // show error massage
+            // show error massage, 印出錯誤字串
             console.log(`Error:${error}`);
         }
     );
