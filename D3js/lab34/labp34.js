@@ -10,7 +10,7 @@ function type(d) {
     return {
         budget: +d.budget, // 在資料前給個 + 即轉為數字
         genre: parseNA(d.genre),  // 處理空值
-        genres:JSON.parse(d.genres).map(d=>d.name),
+        genres: JSON.parse(d.genres).map(d => d.name),
         homepage: parseNA(d.homepage),
         id: +d.id, // 轉為數字
         imdb_id: parseNA(d.imdb_id),
@@ -18,7 +18,7 @@ function type(d) {
         overview: parseNA(d.overview),
         popularity: +d.popularity, // 轉為數字
         poster_path: parseNA(d.poster_path),
-        production_countries:JSON.parse(d.production_countries).map(d=>d.name),
+        production_countries: JSON.parse(d.production_countries).map(d => d.name),
         release_date: date,
         release_year: date.getFullYear(), // 增加資料: 取出年份
         revenue: +d.revenue, // 轉為數字
@@ -33,7 +33,7 @@ function type(d) {
 //資料篩選
 function filterData(data) {
     return data.filter( // 設定條件: 滿足條件才回傳
-        d => {  
+        d => {
             return (
                 d.release_year > 1999 && d.release_year < 2010 &&
                 d.revenue > 0 &&
@@ -46,7 +46,7 @@ function filterData(data) {
 };
 
 // 資料
-function prepareLineChartData(data){
+function prepareLineChartData(data) {
     //取得發行年份
     const groupByYear = d => d.release_year;
 
@@ -54,133 +54,156 @@ function prepareLineChartData(data){
     const sumOfRevenue = values => d3.sum(values, d => d.revenue);
     //依年份加總revenue
     const sumOfRevenueByYear = d3.rollup(data, sumOfRevenue, groupByYear);
-    
+
     //只取出budget加總
     const sumOfBudget = values => d3.sum(values, d => d.budget);
     //依年份加總budget
     const sumOfBudgetByYear = d3.rollup(data, sumOfBudget, groupByYear);
-   
+
     //放進array並排序
-    const revenueArray = Array.from(sumOfRevenueByYear).sort((a,b)=>a[0]-b[0]);
-    const budgetArray = Array.from(sumOfBudgetByYear).sort((a,b)=>a[0]-b[0]);
+    const revenueArray = Array.from(sumOfRevenueByYear).sort((a, b) => a[0] - b[0]);
+    const budgetArray = Array.from(sumOfBudgetByYear).sort((a, b) => a[0] - b[0]);
 
     //用年份來產生日期時間格式的資料，作為後續繪圖的X軸
     //year string --> date object
     const parseYear = d3.timeParse('%Y');
-    const dates = revenueArray.map(d=>parseYear(d[0]));
+    const dates = revenueArray.map(d => parseYear(d[0]));
 
     //找出最大值 (為了畫折線圖時, 不要超過頂端)
     // (把各年份的revenue與各年份的budget都先放在一起, 再抓最大值)
-    const allDataArray = revenueArray.map(d=>d[1]).concat(budgetArray.map(d=>d[1]));
+    const allDataArray = revenueArray.map(d => d[1]).concat(budgetArray.map(d => d[1]));
     const yMax = d3.max(allDataArray);
-    // debugger;
-    const lineData = {};
+    
+    // Return final data
+    const lineData = {
+        series: [
+            {
+                name: 'Revenue',
+                color: 'dodgerblue',
+                values: revenueArray.map(d => ({ date: parseYear(d[0]), value: d[1] }))
+            },
+            {
+                name: 'Budget',
+                color: 'darkorange',
+                values: budgetArray.map(d => ({ date: parseYear(d[0]), value: d[1] }))
+            }
+        ],
+        dates: dates,
+        yMax: yMax
+    };
     return lineData;
 };
 
 // 轉換數字表示式 (刻度用)
-function formatTicks(d){
+function formatTicks(d) {
     return d3.format('~s')(d)
-    .replace('M','mil')
-    .replace('G','bil')
-    .replace('T','tri')
+        .replace('M', 'mil')
+        .replace('G', 'bil')
+        .replace('T', 'tri')
 };
 
 // 控制軸標題位置用的函數
-function addLabel(axis, label, x, y){
-    /* axis 是呼叫者- 哪一個軸*/
-    axis.selectAll('.tick:last-of-type text')
-            .clone() // copy 一份
-            .text(label)
-            .attr('x',x).attr('y',y)
-            .style('text-anchor','start')
-            .style('font-weight','bold')
-            .style('fill','#555');
-};
+// function addLabel(axis, label, x, y) {
+//     /* axis 是呼叫者- 哪一個軸*/
+//     axis.selectAll('.tick:last-of-type text')
+//         .clone() // copy 一份
+//         .text(label)
+//         .attr('x', x).attr('y', y)
+//         .style('text-anchor', 'start')
+//         .style('font-weight', 'bold')
+//         .style('fill', '#555');
+// };
 
-function setupCanvas(data){
+function setupCanvas(data) {
     const svg_width = 500;
     const svg_height = 500;
-    const chart_margin = {top:80,bottom:40,left:80,right:40};
+    const chart_margin = { top: 80, bottom: 40, left: 80, right: 60 };
     const chart_width = svg_width - (chart_margin.left + chart_margin.right);
     const chart_height = svg_height - (chart_margin.top + chart_margin.bottom);
     // Draw Scatter Base
-    const this_svg = d3.select('.scatter-plot-container')
-                        .append('svg')
-                        .attr('width', svg_width).attr('height',svg_height)
-                        .append('g')
-                        .attr('transform',`translate(${chart_margin.left},${chart_margin.top})`);
-    
+    const this_svg = d3.select('.line-chart-container')
+        .append('svg')
+        .attr('width', svg_width).attr('height', svg_height)
+        .append('g')
+        .attr('transform', `translate(${chart_margin.left},${chart_margin.top})`);
+
     //Set Scale: 
-    const xExtent = d3.extent(data, d=>d.budget);
-    const xScale = d3.scaleLinear()
-                        .domain(xExtent)
-                        .range([0, chart_width]);
+    //用時間來做X軸
+    const xExtent = d3.extent(data.dates);
+    const xScale = d3.scaleTime()  // 改為對時間分配
+        .domain(xExtent)
+        .range([0, chart_width]);
 
-    //垂直空間的分配
-    const yExtent = d3.extent(data, d=>d.revenue);
+    //垂直空間(Y軸)的分配
     const yScale = d3.scaleLinear()
-                    .domain(yExtent) 
-                    .range([chart_height,0]);
-                    // 營收最小的放最下方，與座標相反
-    
-    //Draw Scatters
-    this_svg.selectAll('.scatter')
-                .data(data).enter()
-                .append('circle')
-                    .attr('class','scatter')
-                    .attr('cx',d=>xScale(d.budget))
-                    .attr('cy',d=>yScale(d.revenue))
-                    .attr('r',4)
-                    .style('fill','dodgerblue')
-                    .style('fill-opacity',0.5); 
-                        // 降低一點透明度, 讓重疊的看得清楚
-    
-    // 格線&刻度
-    const xAxis = d3.axisBottom(xScale)
-                    .ticks(5)
-                    .tickFormat(formatTicks)
-                    .tickSizeInner(-chart_height) // 刻度線;  負號表示往下長 
-                    .tickSizeOuter(0);
-    const xAxisDraw = this_svg.append('g')
-                                .attr('class','x axis')
-                                .attr('transform',`translate(-10,${chart_height+10})`)
-                                .call(xAxis)
-                                .call(addLabel,'Budget',25,0);
-    xAxisDraw.selectAll('text').attr('dy','2em'); 
+        .domain([0,data.yMax])
+        .range([chart_height, 0]);
 
+    //line generator
+    const lineGen = d3.line()
+                .x(d=>xScale(d.date))
+                .y(d=>yScale(d.value));
+
+    //Draw Line
+    const chartGroup = this_svg.append('g').attr('class','line-chart');
+    chartGroup.selectAll('.line-series')
+        .data(data.series).enter()
+        .append('path')
+            .attr('class',d=>`line-series ${d.name.toLowerCase()}`)
+            .attr('d',d=>lineGen(d.values))
+            .style('fill','none')
+            .style('stroke',d=>d.color);
+
+    // 格線&刻度
+    //畫 X axis
+    const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+    this_svg.append('g')
+            .attr('class','x axis')
+            .attr('transform',`translate(0,${chart_height})`)
+            .call(xAxis);
+    //畫 Y axis
     const yAxis = d3.axisLeft(yScale)
-                    .ticks(5)
-                    .tickFormat(formatTicks)
-                    .tickSizeInner(-chart_height)
-                    .tickSizeOuter(0);
-    const yAxisDraw = this_svg.append('g')
-                                .attr('class','y axis')
-                                .attr('transform',`translate(-10,10)`)
-                                .call(yAxis)
-                                .call(addLabel,'Revenue',-30,-30);
-    yAxisDraw.selectAll('text').attr('dx','-2em');
+                .ticks(5).tickFormat(formatTicks)
+                .tickSizeInner(-chart_height)
+                .tickSizeOuter(0);
+    this_svg.append('g')
+                .attr('class','y axis')
+                .call(yAxis);
+
+    // 標上 Label
+    //放在最後一個點的旁邊(x+5,y不變)
+    chartGroup.append('g')
+                .attr('class','series-labels')
+                .selectAll('.series-label')
+                .data(data.series).enter()
+                .append('text')
+                    // 算出最後一個點的座標, 再調整位置
+                    .attr('x',d=>xScale(d.values[d.values.length-1].date)+5)
+                    .attr('y',d=>yScale(d.values[d.values.length-1].value))
+                    .text(d=>d.name)
+                        .style('dominant-baseline','central')
+                        .style('font-size','0.8em').style('font-weight','bold')
+                        .style('fill',d=>d.color);
 
     // 寫出 header
     const header = this_svg.append('g')
-                            .attr('class','bar-header')
-                            .attr('transform',`translate(0,${-chart_margin.top/2})`)
-                            .append('text');
-    header.append('tspan').text('Budget vs. Revenue in $US')
-                        .style('font-size','2em');
-    header.append('tspan').text('Top 100 films by budget, 2000-2009')
-                        .attr('x',0).attr('y',20)
-                        .style('font-size','0.8em').style('fill','#555');
+        .attr('class', 'bar-header')
+        .attr('transform', `translate(0,${-chart_margin.top / 2})`)
+        .append('text');
+    header.append('tspan').text('Budget and Revenue over time in $US')
+    header.append('tspan').text('Films w/ budget and revenue, 2000-2009')
+        .attr('x', 0).attr('y', 20)
+        .style('font-size', '0.8em').style('fill', '#555');
 };
 
 
-// 將 Main 區塊 跟 Load 區塊結合
-d3.csv('../movies.csv',type).then(
+// Main 區塊 + Load 區塊
+d3.csv('../movies.csv', type).then(
     movies => {
-        const moviesClean = filterData(movies); 
-        console.log(moviesClean);
+        const moviesClean = filterData(movies);
+        // console.log(moviesClean);
         const lineChartData = prepareLineChartData(moviesClean);
         console.log(lineChartData);
-        // setupCanvas(lineChartData);
+        setupCanvas(lineChartData);
     }
 );

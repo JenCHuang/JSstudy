@@ -1,0 +1,15 @@
+body {
+    text-align: center;
+}
+
+svg {
+    border: 1px solid #ccc;
+}
+
+.axis .domain{
+    stroke: none;
+}
+
+.x line {
+    stroke: white;
+}
