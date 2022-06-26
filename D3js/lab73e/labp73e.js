@@ -150,6 +150,7 @@ function setupCanvas(data) {
             .data(data.series[0].values).enter()
             .append('circle')
             .attr('class', `dots1`)
+            .attr('id', d=>`dr${Math.floor(xScale(d.date))}`)
             .attr('cx', d=>xScale(d.date))
             .attr('cy', d=>yScale(d.value))
             .attr('r', 5)
@@ -159,6 +160,7 @@ function setupCanvas(data) {
             .data(data.series[1].values).enter()
             .append('circle')
             .attr('class', `dots2`)
+            .attr('id', d=>`db${Math.floor(xScale(d.date))}`)
             .attr('cx', d=>xScale(d.date))
             .attr('cy', d=>yScale(d.value))
             .attr('r', 5)
@@ -212,54 +214,46 @@ function setupCanvas(data) {
     const tip1 = d3.select('.tooltip1');
     const tip2 = d3.select('.tooltip2');
 
-    // function highlightDots(data){
-    //     const selectedYEARs = data[0].map(d=>d.date);
-    //     d3.selectAll('.dots_revenue')
-    //             .filter(d=>selectedYEARs.includes(d.date))
-    //             .style('opacity',0.5);
-    //     d3.selectAll('.dots_revenue')
-    //             .filter(d=>!selectedYEARs.includes(d.date))
-    //             .style('opacity',0);
-    // };
+    function highlightDots(yearid){
+        const selectedX = Math.floor(xScale(yearid));
+        d3.select(`#dr${selectedX}`).style('fill-opacity', 0.5);
+        d3.select(`#db${selectedX}`).style('fill-opacity', 0.5);
 
-    
-    function mouseover(e){
-        let X = e.clientX - chart_margin.left -10
-        tip1.style('left',(e.clientX+15)+'px')
-            .style('top',e.clientY+'px')
+        let i = yearid.getYear() - 100;
+        let datar = data.series[0].values[i].value;
+        let y1 = yScale(datar) + chart_margin.top +20;
+        let datab = data.series[1].values[i].value;
+        let y2 = yScale(datab) + chart_margin.top +20;
+        let x0 = xScale(yearid) + chart_margin.left;
+        tip1.style('left',x0+'px')
+            .style('top',y1+'px')
             .style('opacity',0.98)
             .style('font-size', '0.7em')
             .style('color', 'dodgerblue')
-            .html(X);
-        d3.selectAll('.dots1').style('fill-opacity', 0.5);
-        d3.selectAll('.dots2').style('fill-opacity', 0.5);
+            .html(datar);
+        tip2.style('left',x0+'px')
+            .style('top',y2+'px')
+            .style('opacity',0.98)
+            .style('font-size', '0.7em')
+            .style('color', 'darkorange')
+            .html(datab);
     };
 
     function mousemove(e){
-        let X = e.clientX - chart_margin.left -10
-        // const dots1 = data.series.filter(
-        //     d => {X-20 < xScale(d.date) && xScale(d.date) < X+20}
-        // );
-        // const dots2 = data.series[1].filter(
-        //     d => {X-20 < xScale(d.date) && xScale(d.date) < X+20}
-        // );
-        // highlightDots(dots1);
-        // highlightDots(dots2);
-        tip1.style('left',(e.clientX+15)+'px')
-            .style('top',e.clientY+'px')
-            .style('opacity',0.98)
-            .style('font-size', '0.7em')
-            .style('color', 'dodgerblue')
-            .html(X);
+        d3.selectAll('.dots1').style('fill-opacity', 0);
+        d3.selectAll('.dots2').style('fill-opacity', 0);
+        let X = e.clientX - chart_margin.left -9 ;
+        const yearid = data.dates.find(d => Math.abs(xScale(d)-X) < 20 );
+        highlightDots(yearid);
     };
     function mouseout(e){
         tip1.transition().style('opacity',0);
+        tip2.transition().style('opacity',0);
         d3.selectAll('.dots1').style('fill-opacity', 0);
         d3.selectAll('.dots2').style('fill-opacity', 0);
     };
     // //interactive 新增監聽
     d3.selectAll('.eventregion')
-            .on('mouseover',mouseover)
             .on('mousemove',mousemove)
             .on('mouseout',mouseout);
 };
@@ -269,7 +263,6 @@ function setupCanvas(data) {
 d3.csv('../movies.csv', type).then(
     movies => {
         const moviesClean = filterData(movies);
-        // console.log(moviesClean);
         const lineChartData = prepareLineChartData(moviesClean);
         console.log(lineChartData);
         setupCanvas(lineChartData);
