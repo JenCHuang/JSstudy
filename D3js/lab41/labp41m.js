@@ -15,6 +15,40 @@ function click() {
     update(thisFruitList);
 };
 
+let selectcontrol = 99;
+const selectarr = ['steven','natalia','clinton']
+d3.select(document).on("keydown", function(e){
+    e.preventDefault();
+    if (e.key == 'ArrowRight'){
+        selectcontrol++;
+        let buttonselect = selectarr[selectcontrol % 3];
+        let button = document.getElementsByClassName(buttonselect)[0];
+        button.focus();
+    };
+    if (e.key == 'ArrowLeft'){
+        selectcontrol--;
+        let buttonselect = selectarr[selectcontrol % 3];
+        let button = document.getElementsByClassName(buttonselect)[0];
+        button.focus();
+    };
+    if (e.key == 'Enter') {
+        let button = document.activeElement;
+        button.click();
+    };
+    if (e.key == 's') {
+        let button = document.getElementsByClassName('steven')[0];
+        button.click();
+    };
+    if (e.key == 'n') {
+        let button = document.getElementsByClassName('natalia')[0];
+        button.click();
+    };
+    if (e.key == 'c') {
+        let button = document.getElementsByClassName('clinton')[0];
+        button.click();
+    };
+});
+
 function update(data){
     thisSVG.selectAll('text').data(data,d=>d)
             .join(
